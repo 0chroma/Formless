@@ -4,7 +4,7 @@ defmodule Formless.Mixfile do
   def project do
     [app: :formless,
      version: "0.0.1",
-     elixir: "~> 1.0",
+     elixir: "~> 1.2",
      deps: deps]
   end
 
@@ -12,7 +12,10 @@ defmodule Formless.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger]]
+    [
+      applications: [:logger, :caylir],
+      mod: {Formless, []}
+    ]
   end
 
   # Dependencies can be Hex packages:
@@ -25,6 +28,8 @@ defmodule Formless.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [
+      { :caylir, "~> 0.2" }
+    ]
   end
 end

@@ -22,3 +22,7 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+config :formless, Formless.Graph,
+  host: 'localhost',
+  pool: [max_overflow: 0, size: 1],
+  port: 64210

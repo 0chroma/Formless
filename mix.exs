@@ -29,7 +29,8 @@ defmodule Formless.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      { :caylir, "~> 0.2" }
+      { :caylir, "~> 0.2" },
+      { :gibran, "~> 0.0.1" }
     ]
   end
 end

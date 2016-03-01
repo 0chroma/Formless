@@ -14,7 +14,7 @@ defmodule Formless.Store.Analysis do
     |> ngramize_list(length)
   end
 
-  def ngramize_list(list, 1) do
+  def ngramize_list(_, 1) do
     []
   end
   def ngramize_list(list, n) when n > 1 do
@@ -25,8 +25,7 @@ defmodule Formless.Store.Analysis do
     [list]
   end
 
-  def sublists(list, n) do
-    [_|tail] = list
+  def sublists(list = [_|tail], n) do
     [Enum.take(list, n)] ++ sublists(tail, n)
   end
 end

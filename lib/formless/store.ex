@@ -3,12 +3,20 @@ defmodule Formless.Store do
 
   def write(bucket, text) do
     text
-    |> Analysis.ngrams
-    |> Enum.each &write_quads(&1)
+    |> Analysis.ngrams()
+    |> Enum.each(&write_quads(bucket, &1))
   end
 
-  defp write_quads(ngram) do
-    IO.puts ngram
+  defp write_quads(bucket, ngram) do
+    Enum.each [:begins_with, :ends_with], fn(predicate) ->
+      ngram
+      |> split_to_quads(predicate)
+      |> Enum.each(&write_quad(bucket, ngram, predicate, &1))
+    end
+  end
+
+  defp split_to_quads(ngram, predicate) when predicate in [:begins_with, :ends_with] do
+    #TODO
   end
 
   defp write_quad(bucket, ngram, predicate, words) when predicate in [:begins_with, :ends_with] do

@@ -14,18 +14,18 @@ defmodule Formless.Store.Analysis do
     |> ngramize_list(length)
   end
 
-  def ngramize_list(_, 1) do
+  defp ngramize_list(_, 1) do
     []
   end
-  def ngramize_list(list, n) when n > 1 do
+  defp ngramize_list(list, n) when n > 1 do
     sublists(list, n) ++ ngramize_list(list, n-1)
   end
 
-  def sublists(list, n) when length(list) == n do
+  defp sublists(list, n) when length(list) == n do
     [list]
   end
 
-  def sublists(list = [_|tail], n) do
+  defp sublists(list = [_|tail], n) do
     [Enum.take(list, n)] ++ sublists(tail, n)
   end
 end

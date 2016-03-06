@@ -1,13 +1,13 @@
 cayley:
-  image: saidimu/cayley:v0.4.0
+  image: hflw/cayley:latest
   volumes:
-    - ./cayley:/etc/cayley
-  volumes_from:
-    - cayleydata
+    - ./cayley:/data
+  #volumes_from:
+  #  - cayleydata
   ports:
     - "64210:64210"
 
-cayleydata:
-  image: busybox
-  volumes:
-    - /data
+#cayleydata:
+#  image: busybox
+#  volumes:
+#    - /data

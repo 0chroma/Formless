@@ -1,13 +1,13 @@
-cayley:
-  image: hflw/cayley:latest
-  volumes:
-    - ./cayley:/data
-  #volumes_from:
-  #  - cayleydata
+neo4j:
+  image: neo4j:2.3.2
+  volumes_from:
+    - neo4jdata
   ports:
-    - "64210:64210"
+    - "7474:7474"
+  environment:
+    NEO4J_AUTH: 'none'
 
-#cayleydata:
-#  image: busybox
-#  volumes:
-#    - /data
+neo4jdata:
+  image: busybox
+  volumes:
+    - /data

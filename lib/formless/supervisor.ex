@@ -7,7 +7,6 @@ defmodule Formless.Supervisor do
 
   def init(:ok) do
     children = [
-      Formless.Graph.child_spec,
     ]
 
     supervise(children, strategy: :one_for_one)

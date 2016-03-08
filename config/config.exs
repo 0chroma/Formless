@@ -22,7 +22,8 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-config :formless, Formless.Graph,
-  host: 'localhost',
-  pool: [max_overflow: 0, size: 1],
-  port: 64210
+config :neo4j_sips, Neo4j,
+  url: "http://localhost:7474",
+  pool_size: 5,
+  max_overflow: 2,
+  timeout: 30

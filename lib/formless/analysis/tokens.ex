@@ -1,6 +1,6 @@
 defmodule Formless.Analysis.Tokens do
   def from_text(text, strategy \\ :regex, opts \\ []) do
-    tokenizer = Module.concat(Formless.Analysis.Tokenizer, String.upcase(Atom.to_string(strategy)))
+    tokenizer = Module.concat(Formless.Analysis.Tokenizer, String.capitalize(Atom.to_string(strategy)))
     tokenizer.tokenize(text, opts)
   end
 

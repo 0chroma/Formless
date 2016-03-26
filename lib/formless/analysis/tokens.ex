@@ -15,16 +15,13 @@ defmodule Formless.Analysis.Tokens do
     String.split(text, regex)
   end
 
-  def edge_shingles(tokens, min_size \\ 1, max_size \\ :infinity, side \\ :both) when is_atom(side) do
+  def edge_shingles(tokens, min_size \\ 1, max_size \\ :infinity, side \\ :both)
+  def edge_shingles(tokens, min_size, max_size, side) when is_atom(side) do
     case side do
       :beginning -> edge_shingles tokens, min_size, max_size, -1
       :end -> edge_shingles tokens, min_size, max_size, 1
       :both -> edge_shingles(tokens, min_size, max_size, -1) ++ edge_shingles(tokens, min_size, max_size, 1)
     end
-  end
-
-  def edge_shingles([], _, _, _) do
-    []
   end
   def edge_shingles(tokens, min_size, _, _) when length(tokens) <= min_size do
     []

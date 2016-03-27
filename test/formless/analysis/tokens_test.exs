@@ -30,8 +30,8 @@ defmodule Formless.Analysis.TokensTest do
       ["."]
     ]
     assert Tokens.edge_shingles(["Test", "sentence", "please", "ignore", "."]) == output
-    assert Tokens.edge_shingles(["Test", "sentence", "please", "ignore", "."], 1, 3) == Enum.filter(output, &(length(&1) <= 3))
-    assert Tokens.edge_shingles(["Test", "sentence", "please", "ignore", "."], 3) == Enum.filter(output, &(length(&1) >= 3))
+    assert Tokens.edge_shingles(["Test", "sentence", "please", "ignore", "."], :both, 1, 3) == Enum.filter(output, &(length(&1) <= 3))
+    assert Tokens.edge_shingles(["Test", "sentence", "please", "ignore", "."], :both, 3) == Enum.filter(output, &(length(&1) >= 3))
   end
   
   test "shingles" do

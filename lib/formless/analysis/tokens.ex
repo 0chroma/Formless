@@ -15,23 +15,23 @@ defmodule Formless.Analysis.Tokens do
     String.split(text, regex)
   end
 
-  def edge_shingles(tokens, min_size \\ 1, max_size \\ :infinity, side \\ :both)
-  def edge_shingles(tokens, min_size, max_size, side) when is_atom(side) do
+  def edge_shingles(tokens, side \\ :both, min_size \\ 1, max_size \\ :infinity)
+  def edge_shingles(tokens, side, min_size, max_size) when is_atom(side) do
     case side do
-      :beginning -> edge_shingles tokens, min_size, max_size, -1
-      :end -> edge_shingles tokens, min_size, max_size, 1
-      :both -> edge_shingles(tokens, min_size, max_size, -1) ++ edge_shingles(tokens, min_size, max_size, 1)
+      :beginning -> edge_shingles tokens, -1, min_size, max_size
+      :end -> edge_shingles tokens, 1, min_size, max_size
+      :both -> edge_shingles(tokens, -1, min_size, max_size) ++ edge_shingles(tokens, 1, min_size, max_size)
     end
   end
-  def edge_shingles(tokens, min_size, _, _) when length(tokens) <= min_size do
+  def edge_shingles(tokens, _, min_size, _) when length(tokens) <= min_size do
     []
   end
-  def edge_shingles(tokens, min_size, max_size, side) when length(tokens) - 1 > max_size do
-    edge_shingles(Enum.drop(tokens, side), min_size, max_size, side)
+  def edge_shingles(tokens, side, min_size, max_size) when length(tokens) - 1 > max_size do
+    edge_shingles(Enum.drop(tokens, side), side, min_size, max_size)
   end
-  def edge_shingles(tokens, min_size, max_size, side) do
+  def edge_shingles(tokens, side, min_size, max_size) do
     shingle = Enum.drop(tokens, side)
-    [shingle] ++ edge_shingles(shingle, min_size, max_size, side)
+    [shingle] ++ edge_shingles(shingle, side, min_size, max_size)
   end
 
   def shingles(tokens) do
@@ -53,9 +53,11 @@ defmodule Formless.Analysis.Tokens do
 
   def matching_pair_characters?(tokens) do
     # TODO: this would be a nice to have but not necessary
+    tokens
   end
 
   def stopwords(tokens) do
     # TODO: this would be a nice to have but not necessary
+    tokens
   end
 end

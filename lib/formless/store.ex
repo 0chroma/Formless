@@ -4,6 +4,7 @@ defmodule Formless.Store do
   alias Neo4j.Sips, as: Neo4j
 
   def write(bucket, text) do
+    #TODO: add sentence guids so we can find overlap between unique sentences from the same source
     text
     |> Tokens.sentences_from_text() # list of sentences
     |> Enum.map(&Tokens.words_from_text(&1)) # list of tokenized sentences

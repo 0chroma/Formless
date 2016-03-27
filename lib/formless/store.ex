@@ -1,5 +1,5 @@
 defmodule Formless.Store do
-  alias Formless.Store.Quad
+  alias Formless.Store.Queries
   alias Formless.Analysis.Tokens
   alias Neo4j.Sips, as: Neo4j
 
@@ -7,22 +7,22 @@ defmodule Formless.Store do
     text
     |> Tokens.sentences_from_text() # list of sentences
     |> Enum.map(&Tokens.words_from_text(&1)) # list of tokenized sentences
-    |> Enum.flat_map(&subshingles(&1)) # list of {shingle, [subshingles]} from each sentence
-    |> IO.inspect()
+    |> Enum.flat_map(&shingles(&1)) # list of {shingle, side, [subshingles]} from each sentence
+    |> Enum.flat_map(&Queries.shingle_to_cypher(&1)) # list of cypher query strings
+    |> write_to_neo4j()
   end
 
-  defp subshingles(tokens) do
+  defp shingles(tokens) do
     Enum.flat_map [:beginning, :end], fn(side) ->
       Tokens.edge_shingles(tokens, side, 3)
-      |> Enum.map(&{&1, Tokens.edge_shingles(&1, opposite_side(side))})
+      |> Enum.map(&subshingles(&1, side))
     end
   end
+  defp subshingles(tokens, side), do: {tokens, side, Tokens.edge_shingles(tokens, opposite_side(side))}
   defp opposite_side(:beginning), do: :end
   defp opposite_side(:end), do: :beginning
 
-  defp write_cypher(quads) do
-    queries = Enum.map quads, &Quad.to_cypher_merge(&1)
-    IO.puts Enum.join queries, "\n"
+  defp write_to_neo4j(queries) do
     Neo4j.query Neo4j.conn, queries
   end
 end

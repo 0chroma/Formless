@@ -1,6 +1,7 @@
 defmodule Formless.Store do
   alias Formless.Store.Queries
   alias Formless.Analysis.Tokens
+  alias Formless.Analysis.Text
   alias Neo4j.Sips, as: Neo4j
 
   def write(bucket, text) do
@@ -10,7 +11,7 @@ defmodule Formless.Store do
     |> Enum.map(&Tokens.words_from_text(&1)) # list of tokenized sentences
     |> Enum.flat_map(&shingles(&1)) # list of {shingle, side, [subshingles]} from each sentence
     |> Enum.flat_map(&Queries.shingle_to_cypher(&1, bucket)) # list of cypher query strings
-    |> write_to_neo4j()
+    |> query_neo4j()
   end
 
   defp shingles(tokens) do
@@ -23,7 +24,23 @@ defmodule Formless.Store do
   defp opposite_side(:beginning), do: :end
   defp opposite_side(:end), do: :beginning
 
-  defp write_to_neo4j(queries) do
-    Neo4j.query Neo4j.conn, queries
+  defp query_neo4j(query) do
+    Neo4j.query Neo4j.conn, query
+  end
+  defp query_neo4j!(query) do
+    Neo4j.query! Neo4j.conn, query
+  end
+
+  def query_random(source_bucket, dest_bucket) do
+    Queries.random_path(source_bucket, dest_bucket)
+    |> query_neo4j!()
+    |> intersect_result()
+  end
+  
+  defp intersect_result(result) do
+    [%{"p" => [node1, relationship, node2]}] = result
+    %{"text" => first} = node1
+    %{"text" => last} = node2
+    Text.intersect(first, last)
   end
 end

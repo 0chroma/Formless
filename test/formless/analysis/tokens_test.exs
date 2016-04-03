@@ -4,9 +4,9 @@ defmodule Formless.Analysis.TokensTest do
   alias Formless.Analysis.Tokens
 
   test "words from text" do
-    assert Tokens.words_from_text("Hello! This is a \"string\".") == ["Hello", "!", "This", "is", "a", "\"", "string", "\"", "."]
-    assert Tokens.words_from_text("Here's (some parenthesis) to test.") == ["Here", "'", "s", "(", "some", "parenthesis", ")", "to", "test", "."]
-    assert Tokens.words_from_text("\"String\" at front") == ["\"", "String", "\"", "at", "front"]
+    assert Tokens.words_from_text("Hello! This is a \"string\".") == ["Hello", "!", " ", "This", " ", "is", " ", "a", " ", "\"", "string", "\"", "."]
+    assert Tokens.words_from_text("Here's (some parenthesis) to test.") == ["Here", "'", "s", " ", "(", "some", " ", "parenthesis", ")", " ", "to", " ", "test", "."]
+    assert Tokens.words_from_text("\"String\" at front") == ["\"", "String", "\"", " ", "at", " ", "front"]
   end
 
   test "sentences from text" do

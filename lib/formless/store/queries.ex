@@ -11,7 +11,7 @@ defmodule Formless.Store.Queries do
     """
       MERGE (n:Shingle #{node_props(shingle, side)})
       #{bucket_property("n", bucket)}
-      MERGE (m:Shingle #{node_props(subshingle, side)})
+      MERGE (m:Shingle #{node_props(subshingle)})
       #{bucket_property("m", bucket)}
       MERGE (n)-[r1:#{predicate}]->(m)
       #{bucket_property("r1", bucket)}
@@ -30,19 +30,32 @@ defmodule Formless.Store.Queries do
       ON MATCH SET #{ref}.bucket = FILTER(x in #{ref}.bucket WHERE NOT(x=#{bucket_escaped})) + #{bucket_escaped}
     """
   end
-  defp node_props(shingle, side) do
+  defp node_props(shingle, side \\ nil) do
     text = Enum.join(shingle)
     text_escaped = Poison.encode! text
     num_tokens = length(shingle)
-    side_string = Atom.to_string side
-    "{text: #{text_escaped}, numTokens: #{num_tokens}, length: #{String.length(text)}, side: \"#{side}\"}"
+    side_part = if side do
+      side_string = Atom.to_string side
+      ", side: \"#{side_string}\""
+    else
+      ""
+    end
+    "{text: #{text_escaped}, numTokens: #{num_tokens}, length: #{String.length(text)}#{side_part}}"
   end
   
-  def traversal(seed, overlap=3) do
+  def random_path(source_bucket, target_bucket) do
+    # Might not be the most efficient way to query for a random node in large buckets,
+    # but I'm not exactly expecting huge amounts of overlap between buckets
+    # Could optimize this further by taking a sampling where clause, ie `WHERE rand() > 0.5`
+    source_escaped = Poison.encode! source_bucket
+    target_escaped = Poison.encode! target_bucket
     """
-    MATCH p=(n:Shingle)-[:LEADS*1..5]->(m:Shingle)
-    WHERE "mybucket" in n.bucket
+    MATCH p=(n:Shingle {side: "beginning"})-[:LEADS]->(m:Shingle {side: "end"})
+    WHERE #{source_escaped} in n.bucket AND #{target_escaped} in m.bucket
+    WITH p, rand() AS r
+    ORDER BY r
     RETURN p
+    LIMIT 1
     """
   end
 end

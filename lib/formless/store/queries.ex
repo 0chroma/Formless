@@ -9,9 +9,9 @@ defmodule Formless.Store.Queries do
       :end -> "BEGINS_WITH"
     end
     """
-      MERGE (n:Shingle #{node_props(shingle)})
+      MERGE (n:Shingle #{node_props(shingle, side)})
       #{bucket_property("n", bucket)}
-      MERGE (m:Shingle #{node_props(subshingle)})
+      MERGE (m:Shingle #{node_props(subshingle, side)})
       #{bucket_property("m", bucket)}
       MERGE (n)-[r1:#{predicate}]->(m)
       #{bucket_property("r1", bucket)}
@@ -30,11 +30,12 @@ defmodule Formless.Store.Queries do
       ON MATCH SET #{ref}.bucket = FILTER(x in #{ref}.bucket WHERE NOT(x=#{bucket_escaped})) + #{bucket_escaped}
     """
   end
-  defp node_props(shingle) do
+  defp node_props(shingle, side) do
     text = Enum.join(shingle)
     text_escaped = Poison.encode! text
     num_tokens = length(shingle)
-    "{text: #{text_escaped}, numTokens: #{num_tokens}, length: #{String.length(text)}}"
+    side_string = Atom.to_string side
+    "{text: #{text_escaped}, numTokens: #{num_tokens}, length: #{String.length(text)}, side: \"#{side}\"}"
   end
   
   def traversal(seed, overlap=3) do

@@ -13,7 +13,7 @@ defmodule Formless.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [
-      applications: [:logger, :neo4j_sips],
+      applications: [:logger, :neo4j_sips, :cowboy, :plug],
       mod: {Formless, []}
     ]
   end
@@ -29,10 +29,12 @@ defmodule Formless.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      { :neo4j_sips, "~> 0.1" },
-      { :poison, "~> 2.0" },
-      { :exleveldb, "~> 0.6" },
-      { :eleveldb, "~> 2.1.0" }
+      {:neo4j_sips, "~> 0.1"},
+      {:poison, "~> 2.0"},
+      {:exleveldb, "~> 0.6"},
+      {:eleveldb, "~> 2.1.0"},
+      {:cowboy, "~> 1.0.0"},
+      {:plug, "~> 1.0"}
     ]
   end
 end

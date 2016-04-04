@@ -26,8 +26,8 @@ defmodule Formless.Store.Queries do
   defp bucket_property(ref, bucket) do
     bucket_escaped = Poison.encode! bucket
     """
-      ON CREATE SET #{ref}.bucket=[#{bucket_escaped}]
-      ON MATCH SET #{ref}.bucket = FILTER(x in #{ref}.bucket WHERE NOT(x=#{bucket_escaped})) + #{bucket_escaped}
+      ON CREATE SET #{ref}.buckets = [#{bucket_escaped}]
+      ON MATCH SET #{ref}.buckets = FILTER(x in #{ref}.buckets WHERE NOT(x=#{bucket_escaped})) + #{bucket_escaped}
     """
   end
   defp node_props(shingle, side \\ nil) do
@@ -51,11 +51,20 @@ defmodule Formless.Store.Queries do
     target_escaped = Poison.encode! target_bucket
     """
     MATCH p=(n:Shingle {side: "beginning"})-[:LEADS]->(m:Shingle {side: "end"})
-    WHERE #{source_escaped} in n.bucket AND #{target_escaped} in m.bucket
+    WHERE #{source_escaped} in n.buckets AND #{target_escaped} in m.buckets
     WITH p, rand() AS r
     ORDER BY r
     RETURN p
     LIMIT 1
+    """
+  end
+
+  def drop_bucket(bucket) do
+    # TODO: Finish this
+    bucket_escaped = Poison.encode! bucket
+    """
+    MATCH (n:Shingle)
+    WHERE #{bucket_escaped} in n.buckets
     """
   end
 end

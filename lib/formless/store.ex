@@ -38,9 +38,13 @@ defmodule Formless.Store do
   end
   
   defp intersect_result(result) do
-    [%{"p" => [node1, relationship, node2]}] = result
-    %{"text" => first} = node1
-    %{"text" => last} = node2
-    Text.intersect(first, last)
+    if length(result) > 0 do
+      [%{"p" => [node1, relationship, node2]}] = result
+      %{"text" => first} = node1
+      %{"text" => last} = node2
+      Text.intersect(first, last)
+    else
+      ""
+    end
   end
 end

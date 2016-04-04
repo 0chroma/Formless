@@ -31,7 +31,8 @@ defmodule Formless.Mixfile do
     [
       { :neo4j_sips, "~> 0.1" },
       { :poison, "~> 2.0" },
-      { :gibran, "~> 0.0.1" }
+      { :exleveldb, "~> 0.6" },
+      { :eleveldb, "~> 2.1.0" }
     ]
   end
 end

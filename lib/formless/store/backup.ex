@@ -22,6 +22,10 @@ defmodule Formless.Store.Backup do
     end
   end
 
+  def drop_bucket(server, bucket) do
+    GenServer.call(server, {:drop_bucket, bucket})
+  end
+
   def stop(server, reason, timeout) do
     GenServer.stop(server, reason, timeout)
   end
@@ -80,7 +84,17 @@ defmodule Formless.Store.Backup do
     end
   end
 
+  def handle_call({:drop_bucket, bucket}, _from, %{store: store} = state) do
+    regex = Regex.compile!("buckets.#{bucket}.([0-9]+)", "u")
+    store
+    |> Exleveldb.stream(:keys_only)
+    |> Stream.filter(&Regex.match?(regex, &1))
+    |> Enum.each(&Exleveldb.delete(store, &1))
+    clear_counter(store, bucket)
+    {:reply, :ok, state}
+  end
+
   def terminate(_reason, %{store: store}) do
-    Exleveldb.close(store)
+    :ok = Exleveldb.close(store)
   end
 end

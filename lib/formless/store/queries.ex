@@ -14,13 +14,10 @@ defmodule Formless.Store.Queries do
       MERGE (m:Shingle #{node_props(subshingle)})
       #{bucket_property("m", bucket)}
       MERGE (n)-[r1:#{predicate}]->(m)
-      #{bucket_property("r1", bucket)}
       WITH m
       MATCH (s:Shingle)-[:ENDS_WITH]->(m)<-[:BEGINS_WITH]-(t:Shingle)
       MERGE (s)-[r2:LEADS]->(t)
-      #{bucket_property("r2", bucket)}
       MERGE (s)<-[r3:FOLLOWS]-(t)
-      #{bucket_property("r3", bucket)}
     """
   end
   defp bucket_property(ref, bucket) do
@@ -50,21 +47,33 @@ defmodule Formless.Store.Queries do
     source_escaped = Poison.encode! source_bucket
     target_escaped = Poison.encode! target_bucket
     """
-    MATCH p=(n:Shingle {side: "beginning"})-[:LEADS]->(m:Shingle {side: "end"})
-    WHERE #{source_escaped} in n.buckets AND #{target_escaped} in m.buckets
-    WITH p, rand() AS r
-    ORDER BY r
-    RETURN p
-    LIMIT 1
+      MATCH p=(n:Shingle {side: "beginning"})-[:LEADS]->(m:Shingle {side: "end"})
+      WHERE #{source_escaped} in n.buckets AND #{target_escaped} in m.buckets
+      WITH p, rand() AS r
+      ORDER BY r
+      RETURN p
+      LIMIT 1
     """
   end
 
   def drop_bucket(bucket) do
-    # TODO: Finish this
     bucket_escaped = Poison.encode! bucket
     """
-    MATCH (n:Shingle)
-    WHERE #{bucket_escaped} in n.buckets
+      MATCH (n:Shingle)
+      WHERE #{bucket_escaped} in n.buckets
+      SET n.buckets = FILTER(x in n.buckets WHERE NOT(x=#{bucket_escaped}))
+      WITH n
+      WHERE n.buckets = []
+      DETACH DELETE n
+    """
+  end
+
+  def list_buckets() do
+    """
+      MATCH (n:Shingle)
+      UNWIND n.buckets as bucket
+      WITH collect(DISTINCT bucket) as buckets
+      RETURN buckets
     """
   end
 end

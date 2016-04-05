@@ -1,10 +1,14 @@
 defmodule Formless.Store do
+  alias Formless.Store.Backup
   alias Formless.Store.Queries
   alias Formless.Analysis.Tokens
   alias Formless.Analysis.Text
   alias Neo4j.Sips, as: Neo4j
 
-  def write(bucket, text) do
+  def write(bucket, text, dont_backup? \\ false) do
+    unless dont_backup? do
+      Backup.write_text(Backup, bucket, text)
+    end
     #TODO: add sentence guids so we can find overlap between unique sentences from the same source
     text
     |> Tokens.sentences_from_text() # list of sentences
@@ -48,10 +52,20 @@ defmodule Formless.Store do
     end
   end
 
-  def drop_bucket(bucket) do
-    bucket
+  def drop_bucket(bucket, with_backup? \\ false) do
+    query_result = bucket
     |> Queries.drop_bucket()
     |> query_neo4j()
+    if with_backup? do
+      :ok = Backup.drop_bucket(Backup, bucket)
+    end
+    query_result
+  end
+
+  def reindex_bucket(bucket) do
+    drop_bucket(bucket)
+    Backup.text_stream(Backup, bucket)
+    |> Enum.each(&write(bucket, &1, true))
   end
 
   def list_buckets() do

@@ -47,4 +47,15 @@ defmodule Formless.Store do
       ""
     end
   end
+
+  def drop_bucket(bucket) do
+    bucket
+    |> Queries.drop_bucket()
+    |> query_neo4j()
+  end
+
+  def list_buckets() do
+    Queries.list_buckets()
+    |> query_neo4j()
+  end
 end

@@ -25,6 +25,11 @@ defmodule Formless.Rest do
     send_resp(conn, 200, resp)
   end
 
+  get "/list_buckets" do
+    {:ok, resp} = Store.list_buckets()
+    send_resp(conn, 200, Poison.encode!(resp))
+  end
+
   match _ do
     send_resp(conn, 404, "method not found")
   end

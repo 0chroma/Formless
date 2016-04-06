@@ -6,7 +6,7 @@ defmodule Formless.Supervisor do
   end
 
   def init(:ok) do
-    port = Application.get_env(:formless, :http_port, 8080)
+    port = Application.get_env(:formless, Formless)[:port]
     children = [
       worker(Formless.Store.Backup, [Formless.Store.Backup]),
       Plug.Adapters.Cowboy.child_spec(:http, Formless.Rest, [], port: port)

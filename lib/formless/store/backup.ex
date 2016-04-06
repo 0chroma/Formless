@@ -34,7 +34,7 @@ defmodule Formless.Store.Backup do
   # Server API
 
   def init(:ok) do
-    data_dir = Application.get_env(:formless, :data_directory, "/tmp")
+    data_dir = Application.get_env(:formless, Formless)[:data_dir]
     db_path = Path.join(data_dir, "backup.db")
     {:ok, store} = Exleveldb.open(db_path, [create_if_missing: true])
 

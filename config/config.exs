@@ -15,15 +15,20 @@ use Mix.Config
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 
+config :neo4j_sips, Neo4j,
+  url: "http://localhost:7474",
+  pool_size: 5,
+  max_overflow: 2,
+  timeout: 60
+
+config :formless, Formless,
+  port: 8080,
+  data_dir: "./data"
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
-#
-#     import_config "#{Mix.env}.exs"
-config :neo4j_sips, Neo4j,
-  url: "http://localhost:7474",
-  pool_size: 5,
-  max_overflow: 2,
-  timeout: 30
+
+import_config "#{Mix.env}.exs"

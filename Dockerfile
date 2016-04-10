@@ -14,9 +14,9 @@ ADD config/config.exs config/prod.exs ./config/
 
 RUN mix do deps.get, deps.compile
 
-ADD lib data test README.md ./
+ADD lib data test README.md docker-run.sh ./
 
 # Run compile
 RUN mix compile
 
-CMD ["mix", "run", "--no-halt"]
+CMD ["./docker-run.sh"]

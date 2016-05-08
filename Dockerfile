@@ -9,12 +9,12 @@ ENV MIX_ENV=prod
 WORKDIR /app
 
 # Same with elixir deps
-ADD mix.exs mix.lock ./
+ADD mix.exs ./
 ADD config/config.exs config/prod.exs ./config/
 
 RUN mix do deps.get, deps.compile
 
-ADD lib data test README.md ./
+ADD lib data test README.md LICENSE ./
 
 # Run compile
 RUN mix compile

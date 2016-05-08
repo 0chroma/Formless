@@ -5,7 +5,9 @@ defmodule Formless.Mixfile do
     [app: :formless,
      version: "0.0.1",
      elixir: "~> 1.2",
-     deps: deps]
+     description: "Sentence generator + training engine",
+     deps: deps,
+     package: package]
   end
 
   # Configuration for the OTP application
@@ -13,7 +15,7 @@ defmodule Formless.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [
-      applications: [:logger, :cowboy, :plug, :neo4j_sips, :exleveldb, :poolboy],
+      applications: [:logger, :cowboy, :plug, :neo4j_sips, :exleveldb, :poolboy, :exrm_deb],
       mod: {Formless, []}
     ]
   end
@@ -35,7 +37,24 @@ defmodule Formless.Mixfile do
       {:eleveldb, "~> 2.1.0"},
       {:cowboy, "~> 1.0.0"},
       {:plug, "~> 1.0"},
-      {:exrm, "~> 1.0"}
+      {:exrm, "~> 1.0"},
+      {:exrm_deb, "~> 0.0.5"}
+    ]
+  end
+
+  defp package do
+    # Not published to hex, just here for exrm_deb
+    [
+      external_dependencies: [],
+      license_file: "LICENSE",
+      files: ["lib", "mix.exs", "README*", "LICENSE"],
+      maintainers: ["HFLW <me@hflw.org>"],
+      licenses: ["WTFPL"],
+      vendor: "HFLW",
+      links: %{
+        "GitHub" => "https://github.com/hflw/formless",
+        "Homepage" => "https://github.com/hflw/formless"
+      }
     ]
   end
 end
